@@ -131,15 +131,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     print(skillList.toString());
                   }),
               ElevatedButton(
-                  onPressed: ()  {
+                  onPressed: () async {
                     Navigator.of(context).pop();
                     final today = DateTime.now();
                     final id = DateTime.now().millisecondsSinceEpoch;
-                     firestoreJobPost
-                        .doc(id.toString())
-                        .set({
+                    firestoreJobPost.doc(id.toString()).set({
                       'expiry': today.add(const Duration(hours: 2)).toString(),
-                      'jobId':id.toString(),
+                      'jobId': id.toString(),
                       'postingdate': today.toString(),
                       'recId': nameController.text,
                       'recruiter': nameController.text,
@@ -150,23 +148,25 @@ class _MyHomePageState extends State<MyHomePage> {
                         isLoading = false;
                       });
                     }).onError((error, stackTrace) {});
-                     FirebaseFirestore.instance
-                        .collection('jobdetails')
-                        .doc(nameController.text)
-                        .set({
-                      'recruiter': nameController.text,
-                      'jobposted': FieldValue.increment(1),
-                      'jobId':id.toString(),
-                      'jobfilled':0
-                    });
+                    updateJobDetail(id);
+
+                    // FirebaseFirestore.instance
+                    //     .collection('jobdetails')
+                    //     .doc(nameController.text)
+                    //     .set({
+                    //   'recruiter': nameController.text,
+                    //   'jobposted': FieldValue.increment(1),
+                    //   'jobId': id.toString(),
+                    //   'jobfilled': 0
+                    // });
                     for (var i = 0; i < skillList.length; i++) {
-                       firestoreSkills
+                      firestoreSkills
                           .doc('1704364368862')
                           .update({skillList[i]: FieldValue.increment(1.0)})
                           .then((value) {})
                           .onError((error, stackTrace) => null);
                     }
-                     emptySkillList();
+                    emptySkillList();
                   },
                   child: Text('publish'))
             ],
@@ -174,7 +174,32 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 
-  emptySkillList()  {
+  updateJobDetail(int id) async {
+    var collectionRef = FirebaseFirestore.instance.collection('jobdetails');
+    var doc = await collectionRef.doc(nameController.text).get();
+    if (doc.exists) {
+      FirebaseFirestore.instance
+          .collection('jobdetails')
+          .doc(nameController.text)
+          .update({
+        'recruiter': nameController.text,
+        'jobposted': FieldValue.increment(1),
+        'jobId': id.toString(),
+      });
+    } else {
+      FirebaseFirestore.instance
+          .collection('jobdetails')
+          .doc(nameController.text)
+          .set({
+        'recruiter': nameController.text,
+        'jobposted': FieldValue.increment(1),
+        'jobId': id.toString(),
+        'jobfilled': 0
+      });
+    }
+  }
+
+  emptySkillList() {
     skillList = [];
   }
 
@@ -191,8 +216,10 @@ class _MyHomePageState extends State<MyHomePage> {
   getRecData() async {
     CollectionReference recRef =
         FirebaseFirestore.instance.collection('recruiter');
-        
+    CollectionReference jobdetailRef =
+        FirebaseFirestore.instance.collection('jobdetails');
     QuerySnapshot querySnapshot = await recRef.get();
+    QuerySnapshot qss = await jobdetailRef.get();
 
     final allData = querySnapshot.docs.map((doc) => doc['name']).toList();
     final allIdData = querySnapshot.docs.map((doc) => doc['recId']).toList();
@@ -350,7 +377,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text('dotNet'),
                           Center(
                               child: Text(
-                                  data['dotnet'].toString().split('.')[0] ?? ''))
+                                  data['dotnet'].toString().split('.')[0] ??
+                                      ''))
                         ]),
                         TableRow(children: [
                           Text('Mysql'),
