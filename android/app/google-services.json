@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "210093552791",
+    "project_id": "primethic-task",
+    "storage_bucket": "primethic-task.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:210093552791:android:fc3be15151332e159a65d2",
+        "android_client_info": {
+          "package_name": "com.example.primethic_task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbuM13Y2Vt5NbyuyT5qOC8pOxQ7cYvoxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
