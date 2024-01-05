@@ -213,19 +213,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  getRecData() async {
+ Future<void> getRecData() async {
     CollectionReference recRef =
         FirebaseFirestore.instance.collection('recruiter');
-    CollectionReference jobdetailRef =
-        FirebaseFirestore.instance.collection('jobdetails');
+
     QuerySnapshot querySnapshot = await recRef.get();
-    QuerySnapshot qss = await jobdetailRef.get();
 
     final allData = querySnapshot.docs.map((doc) => doc['name']).toList();
-    final allIdData = querySnapshot.docs.map((doc) => doc['recId']).toList();
+
     setState(() {
       recData = allData;
-      recIdData = allIdData;
     });
 
     // for (var element in allData) {
@@ -294,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var data;
   List<dynamic>? recData;
-  List<dynamic>? recIdData;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -313,110 +310,118 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Jobs Available for skills'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Table(
-                      border: TableBorder.all(),
-                      children: [
-                        TableRow(children: [
-                          Text('Dart'),
-                          Center(
-                              child: Text(
-                                  data['dart'].toString().split('.')[0] ?? ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Python'),
-                          Center(
-                              child: Text(
-                                  data['python'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Flutter'),
-                          Center(
-                              child: Text(
-                                  data['flutter'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Oracle'),
-                          Center(
-                              child: Text(
-                                  data['oracle'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Java'),
-                          Center(
-                              child: Text(
-                                  data['java'].toString().split('.')[0] ?? ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Golang'),
-                          Center(
-                              child: Text(
-                                  data['golang'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Erlang'),
-                          Center(
-                              child: Text(
-                                  data['erlang'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('dotNet'),
-                          Center(
-                              child: Text(
-                                  data['dotnet'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Mysql'),
-                          Center(
-                              child: Text(
-                                  data['firebase'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Firebase'),
-                          Center(
-                              child: Text(
-                                  data['mongodb'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                        TableRow(children: [
-                          Text('MongoDb'),
-                          Center(
-                              child: Text(
-                                  data['dart'].toString().split('.')[0] ?? ''))
-                        ]),
-                        TableRow(children: [
-                          Text('Elixer'),
-                          Center(
-                              child: Text(
-                                  data['elixer'].toString().split('.')[0] ??
-                                      ''))
-                        ]),
-                      ],
+          : RefreshIndicator(
+              onRefresh: getRecData,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Jobs Available for skills'),
                     ),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => FeedPage()));
-                      },
-                      child: Text('go to feed page'))
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Table(
+                        border: TableBorder.all(),
+                        children: [
+                          TableRow(children: [
+                            Text('Dart'),
+                            Center(
+                                child: Text(
+                                    data['dart'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Python'),
+                            Center(
+                                child: Text(
+                                    data['python'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Flutter'),
+                            Center(
+                                child: Text(
+                                    data['flutter'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Oracle'),
+                            Center(
+                                child: Text(
+                                    data['oracle'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Java'),
+                            Center(
+                                child: Text(
+                                    data['java'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Golang'),
+                            Center(
+                                child: Text(
+                                    data['golang'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Erlang'),
+                            Center(
+                                child: Text(
+                                    data['erlang'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('dotNet'),
+                            Center(
+                                child: Text(
+                                    data['dotnet'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Mysql'),
+                            Center(
+                                child: Text(
+                                    data['firebase'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Firebase'),
+                            Center(
+                                child: Text(
+                                    data['mongodb'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('MongoDb'),
+                            Center(
+                                child: Text(
+                                    data['dart'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                          TableRow(children: [
+                            Text('Elixer'),
+                            Center(
+                                child: Text(
+                                    data['elixer'].toString().split('.')[0] ??
+                                        ''))
+                          ]),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 200,),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => FeedPage()));
+                        },
+                        child: Text('go to feed page')),
+                          SizedBox(height: 150,),
+                  ],
+                ),
               ),
             ),
       floatingActionButton: Row(
