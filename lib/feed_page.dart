@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +33,7 @@ class _FeedPageState extends State<FeedPage> {
   void initState() {
     // TODO: implement initState
     getRecData();
+    getTimer();
 
     super.initState();
   }
@@ -51,12 +54,16 @@ class _FeedPageState extends State<FeedPage> {
                 return Center(
                   child: Column(
                     children: [
-                      Table(children: [TableRow(children: [
-              Text('recruiter'),
-              Text('jobposted'),
-              Text('jobfilled'),
-              Text('vacant')
-            ])],),
+                      Table(
+                        children: [
+                          TableRow(children: [
+                            Text('recruiter'),
+                            Text('jobposted'),
+                            Text('jobfilled'),
+                            Text('vacant')
+                          ])
+                        ],
+                      ),
                       Table(
                         children: getJobDetailItems(snapshot),
                       ),
@@ -80,12 +87,31 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
+  getTimer() {
+    Timer.periodic(Duration(milliseconds: 500), (timer) {
+      print('===================================$timer');
+      setState(() {});
+    });
+  }
+
   getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
     return snapshot.data!.docs
         .map((doc) => ListTile(
+              isThreeLine: true,
               title: Text(doc["recruiter"]),
               trailing: Text(doc["postingdate"].toString()),
-              subtitle: Text(doc["skillname"].toString()),
+              subtitle: Column(
+                children: [
+                  Text(doc["skillname"].toString()),
+                  DateTime.now()
+                      .difference(DateTime.parse(doc["expiry"].toString()))
+                      .inSeconds>=0?Text('job expired'):
+                  Text(DateTime.now()
+                      .difference(DateTime.parse(doc["expiry"].toString()))
+                      .inSeconds
+                      .toString()+'seconds left'),
+                ],
+              ),
               onTap: () {
                 FirebaseFirestore.instance
                     .collection('jobdetails')
@@ -94,21 +120,20 @@ class _FeedPageState extends State<FeedPage> {
                   'jobfilled': FieldValue.increment(1),
                   // 'jobposted':FieldValue.increment(-1),
                 });
-                 FirebaseFirestore.instance
+                FirebaseFirestore.instance
                     .collection('jobPost')
                     .doc(doc["jobId"].toString())
                     .delete();
                 final skillList = doc["skillname"];
                 print(skillList);
-                 for (var i = 0; i < skillList.length; i++) {
-                       FirebaseFirestore.instance.collection('skills')
-                          .doc('1704364368862')
-                          .update({skillList[i]: FieldValue.increment(-1.0)})
-                          .then((value) {})
-                          .onError((error, stackTrace) => null);
-                    }
-
-               
+                for (var i = 0; i < skillList.length; i++) {
+                  FirebaseFirestore.instance
+                      .collection('skills')
+                      .doc('1704364368862')
+                      .update({skillList[i]: FieldValue.increment(-1.0)})
+                      .then((value) {})
+                      .onError((error, stackTrace) => null);
+                }
               },
             ))
         .toList();

@@ -136,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     final today = DateTime.now();
                     final id = DateTime.now().millisecondsSinceEpoch;
                     firestoreJobPost.doc(id.toString()).set({
-                      'expiry': today.add(const Duration(hours: 2)).toString(),
+                      'expiry': today.add(const Duration(minutes: 2)).toString(),
                       'jobId': id.toString(),
                       'postingdate': today.toString(),
                       'recId': nameController.text,
@@ -308,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: isLoading
+      body: isLoading 
           ? Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: getRecData,
