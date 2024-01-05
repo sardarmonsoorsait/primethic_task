@@ -308,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: isLoading 
+      body: isLoading || data==null
           ? Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: getRecData,
